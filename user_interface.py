@@ -2,14 +2,30 @@ from tkinter import *
 import tkinter as tk
 from tkinter.ttk import Checkbutton
 from tkinter import messagebox
-
+from functools import partial
 
 class App(tk.Tk):
+    def is_it_float(self, newval):
+        valid_symbols = list("-,.0123456789")
+        for symb in newval:
+            if symb not in valid_symbols:
+                return False
+        if newval == '-' or newval == '':
+            return True
+        else:
+            try:
+                float(newval)
+            except:
+                return False
+        return True
+
     def __init__(self):
         super().__init__()
-        # tk.title("Интерфейс пользователя печки")
+
+        check = (self.register(self.is_it_float), "%P")
 
         opts = {'padx': 5, 'pady': 5, 'sticky': 'nswe'}
+        #common_entry_ui_params = {'padx': 5, 'pady': 5, 'sticky': 'nswe', 'validate': key, 'validatecommand': check}
 
         group_1_t = tk.LabelFrame(self, padx=15, pady=10, text="COM-порт")
         group_1_t.grid(padx=10, pady=5, row=1, column=1)
@@ -23,9 +39,9 @@ class App(tk.Tk):
         tk.Label(group_2_t, text="Kp:").grid(row=2, column=1)
         tk.Label(group_2_t, text="Ki:").grid(row=2, column=3)
         tk.Label(group_2_t, text="Kd:").grid(row=2, column=5)
-        tk.Entry(group_2_t, width=5).grid(row=2, column=2, **opts)
-        tk.Entry(group_2_t, width=5).grid(row=2, column=4, sticky=tk.W)
-        tk.Entry(group_2_t, width=5).grid(row=2, column=6, sticky=tk.W)
+        entry_Kp = Entry(group_2_t, validate="key", validatecommand=check, width=5).grid(row=2, column=2, sticky=tk.W)
+        entry_Ki = tk.Entry(group_2_t, validate="key", validatecommand=check, width=5).grid(row=2, column=4, sticky=tk.W)
+        entry_Kd = tk.Entry(group_2_t, validate="key", validatecommand=check, width=5).grid(row=2, column=6, sticky=tk.W)
         tk.Button(group_2_t, text="Изменить", bg="yellow").grid(row=3, column=6)
 
         group_3_t = tk.LabelFrame(self, padx=15, pady=10, text="Управление по сценарию")
@@ -33,7 +49,7 @@ class App(tk.Tk):
         tk.Label(group_3_t, text="Сценарий:").grid(row=1, column=1)
         tk.Button(group_3_t, text="Выбрать").grid(row=1, column=2, sticky=tk.W)
         tk.Label(group_3_t, text="Адрес файла:").grid(row=2, column=1)
-        tk.Entry(group_3_t).grid(row=2, column=2, sticky=tk.W)
+        tk.Entry(group_3_t, state='disabled').grid(row=2, column=2, sticky=tk.W)
         tk.Button(group_3_t, text="Запустить\n сценарий", bg="Green").grid(row=3, column=1)
         tk.Button(group_3_t, text="Приостановить\n сценарий", bg="Red").grid(row=3, column=2)
 
@@ -42,13 +58,13 @@ class App(tk.Tk):
         tk.Label(group_4_t, text="T_max").grid(row=1, column=1)
         tk.Label(group_4_t, text="ΔT").grid(row=1, column=3)
         tk.Label(group_4_t, text="Δt").grid(row=1, column=5)
-        tk.Entry(group_4_t, width=5).grid(row=1, column=2, sticky=tk.W)
-        tk.Entry(group_4_t, width=5).grid(row=1, column=4, sticky=tk.W)
-        tk.Entry(group_4_t, width=5).grid(row=1, column=6, sticky=tk.W)
+        tk.Entry(group_4_t, validate="key", validatecommand=check, width=5).grid(row=1, column=2, sticky=tk.W)
+        tk.Entry(group_4_t, validate="key", validatecommand=check, width=5).grid(row=1, column=4, sticky=tk.W)
+        tk.Entry(group_4_t, validate="key", validatecommand=check, width=5).grid(row=1, column=6, sticky=tk.W)
         tk.Label(group_4_t, text="<...>n").grid(row=2, column=1)
         tk.Label(group_4_t, text="Δt_R&T").grid(row=2, column=3)
-        tk.Entry(group_4_t, width=5).grid(row=2, column=2, sticky=tk.W)
-        tk.Entry(group_4_t, width=5).grid(row=2, column=4, sticky=tk.W)
+        tk.Entry(group_4_t, validate="key", validatecommand=check, width=5).grid(row=2, column=2, sticky=tk.W)
+        tk.Entry(group_4_t, validate="key", validatecommand=check, width=5).grid(row=2, column=4, sticky=tk.W)
         #tk.Button(group_4_t, text="Старт", bg="yellow").grid(row=3, column=6)
         tk.Button(group_4_t, text="Запустить", bg="Green").grid(row=3, column=1, columnspan=2)
         tk.Button(group_4_t, text="Приостановить", bg="Red").grid(row=3, column=4, columnspan=3)
@@ -80,7 +96,6 @@ class App(tk.Tk):
                 chk_T[i] = Checkbutton(group_1_r, var=chk_state_T[i]).grid(row=4, column=i)
             tk.Button(group_1_r, text="Подтвердить", bg="yellow").grid(row=3, column=13, rowspan=2, columnspan=4)
 
-
         group_2_r = tk.LabelFrame(self, padx=15, pady=10, text="График R(T)")
         group_2_r.grid(padx=10, pady=5, row=2, column=2)
         tk.Label(group_2_r, text="Пока пусто").grid(row=0)
@@ -93,9 +108,9 @@ class App(tk.Tk):
         tk.Label(group_3_r, text="R4").grid(row=2, column=3)
         tk.Label(group_3_r, text="T1").grid(row=1, column=2)
 
-
 if __name__ == "__main__":
     app = App()
+    app.title("Интерфейс пользователя печки")
     app.mainloop()
 
 
